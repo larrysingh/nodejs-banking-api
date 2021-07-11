@@ -23,10 +23,7 @@ opts.secretOrKey = config.secretKey;
 
 exports.jwtPassport = passport.use(
   new JwtStrategy(opts, (jwt_payload, done) => {
-    console.log("JWT payload: ", jwt_payload);
-    console.log(jwt_payload._id);
     User.findById(jwt_payload._id, (err, user) => {
-      console.log("JWT User", user);
       if (err) {
         return done(err, false);
       } else if (user) {
@@ -41,7 +38,6 @@ exports.jwtPassport = passport.use(
 exports.verifyUser = passport.authenticate("jwt", { session: false });
 
 exports.verifyEmployeeUser = function (req, res, next) {
-  console.log(req.user);
   if (req.user.bankEmployee) {
     next();
   } else {
@@ -52,7 +48,6 @@ exports.verifyEmployeeUser = function (req, res, next) {
 };
 
 exports.verifyAdminUser = function (req, res, next) {
-  console.log("Admin", req.user);
   if (req.user.bankAdmin) {
     next();
   } else {

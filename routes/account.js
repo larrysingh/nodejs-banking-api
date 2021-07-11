@@ -12,7 +12,6 @@ router.post("/create", authenticate.verifyUser, (req, res, next) => {
   Account.create(req.body)
     .then(
       (account) => {
-        console.log("Account Created ", account);
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
         res.json(account);
@@ -36,7 +35,6 @@ router.put(
     Account.find({ accountNumber: req.params.accountNumber })
       .then(
         (account) => {
-          console.log(account);
           if (account[0].accountBalance !== 0) {
             var err = new Error(
               "accountBalance must be $0.00 to close account"
@@ -114,8 +112,27 @@ router.get("/list", authenticate.verifyUser, (req, res, next) => {
 });
 
 router.get(
+  "/list/all",
+  authenticate.verifyUser,
+  authenticate.verifyEmployeeUser,
+  (req, res, next) => {
+    Account.find()
+      .then(
+        (accounts) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(accounts);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
+  }
+);
+
+router.get(
   "/search/:accountNumber",
   authenticate.verifyUser,
+  authenticate.verifyEmployeeUser,
   (req, res, next) => {
     Account.find({ accountNumber: req.params.accountNumber })
       .then(

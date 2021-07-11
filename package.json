@@ -1,6 +1,7 @@
 {
   "name": "nodejs-banking-api",
-  "version": "0.0.0",
+  "author": "Prabjot Singh",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"

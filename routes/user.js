@@ -8,7 +8,6 @@ const authenticate = require("../authenticate");
 router.use(bodyParser.json());
 
 router.post("/signup", (req, res, next) => {
-  console.log(req.body);
   User.register(
     new User({
       username: req.body.username,
@@ -23,7 +22,6 @@ router.post("/signup", (req, res, next) => {
     }),
     req.body.password,
     (err, user) => {
-      console.log(user);
       if (err) {
         res.statusCode = 500;
         res.setHeader("Content-Type", "application/json");
@@ -47,8 +45,50 @@ router.post("/signup", (req, res, next) => {
   );
 });
 
+router.put("/", authenticate.verifyUser, (req, res, next) => {
+  User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: req.body,
+    },
+    { new: true }
+  )
+    .then(
+      (user) => {
+        res.statusCode = 200;
+        res.setHeader("Content-Type", "application/json");
+        res.json(user);
+      },
+      (err) => next(err)
+    )
+    .catch((err) => next(err));
+});
+
+router.put(
+  "/:userId",
+  authenticate.verifyUser,
+  authenticate.verifyEmployeeUser,
+  (req, res, next) => {
+    User.findByIdAndUpdate(
+      req.params.userId,
+      {
+        $set: req.body,
+      },
+      { new: true }
+    )
+      .then(
+        (user) => {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(user);
+        },
+        (err) => next(err)
+      )
+      .catch((err) => next(err));
+  }
+);
+
 router.post("/login", passport.authenticate("local"), (req, res) => {
-  console.log("LOGIN REQUEST USER", req.user);
   var token = authenticate.getToken({ _id: req.user.id });
   res.statusCode = 200;
   res.setHeader("Content-Type", "application/json");
@@ -78,8 +118,6 @@ router.get(
   authenticate.verifyUser,
   authenticate.verifyEmployeeUser,
   (req, res, next) => {
-    console.log(req.headers);
-    console.log("here", req.user);
     User.find({ bankEmployee: false, bankAdmin: false })
       .then(
         (customers) => {
@@ -98,8 +136,6 @@ router.get(
   authenticate.verifyUser,
   authenticate.verifyAdminUser,
   (req, res, next) => {
-    console.log(req.headers);
-    console.log("here", req.user);
     User.find({ bankEmployee: true })
       .then(
         (users) => {

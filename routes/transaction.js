@@ -137,7 +137,6 @@ router.post("/create/transfer", authenticate.verifyUser, (req, res, next) => {
     })
       .then(
         (transaction) => {
-          console.log("Transaction Created ", transaction);
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
           res.json(transaction);
@@ -157,8 +156,6 @@ router.post(
   authenticate.verifyUser,
   authenticate.verifyEmployeeUser,
   (req, res, next) => {
-    console.log(req.body);
-
     var transactionIsValid = true;
 
     if (!req.body.fromAccountNumber) {
@@ -225,7 +222,6 @@ router.post(
       })
         .then(
           (transaction) => {
-            console.log("Transaction Created ", transaction);
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
             res.json(transaction);
@@ -314,7 +310,6 @@ router.post(
       })
         .then(
           (transaction) => {
-            console.log("Transaction Created ", transaction);
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
             res.json(transaction);
