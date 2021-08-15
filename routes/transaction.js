@@ -113,6 +113,7 @@ router.post("/create/transfer", authenticate.verifyUser, (req, res, next) => {
     Account.findOne({
       accountNumber: req.body.toAccountNumber,
     }).then((account) => {
+      console.log(account);
       var newAccountBalance = account.accountBalance + req.body.amount * 100;
       Account.findByIdAndUpdate(
         account._id,

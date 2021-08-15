@@ -150,10 +150,11 @@ router.get(
 );
 
 router.put(
-  "/employee",
+  "/employee/set-employee",
   authenticate.verifyUser,
   authenticate.verifyAdminUser,
   (req, res, next) => {
+    console.log(req.body);
     if (!req.body.userId) {
       var err = new Error("userId is required to set user as employee");
       err.status = 500;
@@ -241,7 +242,7 @@ router.put(
 );
 
 router.put(
-  "/employee/remove",
+  "/employee/remove-employee",
   authenticate.verifyUser,
   authenticate.verifyAdminUser,
   (req, res, next) => {
