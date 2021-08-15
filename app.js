@@ -41,10 +41,10 @@ app.use(passport.initialize());
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter);
-app.use("/user", userRouter);
-app.use("/account", accountRouter);
-app.use("/transaction", transactionRouter);
+app.use("/api", indexRouter);
+app.use("/api/user", userRouter);
+app.use("/api/account", accountRouter);
+app.use("/api/transaction", transactionRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

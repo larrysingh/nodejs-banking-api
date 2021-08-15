@@ -325,4 +325,52 @@ router.post(
   }
 );
 
+router.get(
+  "/list/:accountNumber",
+  authenticate.verifyUser,
+  (req, res, next) => {
+    if (!req.user.bankEmployee) {
+      Account.find({
+        accountNumber: req.body.accountNumber,
+        accountOwner: req.user._id,
+      })
+        .then(
+          (account) => {
+            if (account[0] === undefined) {
+              var err = new Error(
+                "You cannot view transactions from an account that does not belong to you"
+              );
+              err.status = 500;
+              next(err);
+            } else {
+              Transaction.find({ fromAccountNumber: req.params.accountNumber })
+                .then(
+                  (transactions) => {
+                    res.statusCode = 200;
+                    res.setHeader("Content-Type", "application/json");
+                    res.json(transactions);
+                  },
+                  (err) => next(err)
+                )
+                .catch((err) => next(err));
+            }
+          },
+          (err) => next(err)
+        )
+        .catch((err) => next(err));
+    } else {
+      Transaction.find({ fromAccountNumber: req.params.accountNumber })
+        .then(
+          (transactions) => {
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "application/json");
+            res.json(transactions);
+          },
+          (err) => next(err)
+        )
+        .catch((err) => next(err));
+    }
+  }
+);
+
 module.exports = router;
