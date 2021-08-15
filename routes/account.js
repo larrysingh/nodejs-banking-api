@@ -99,11 +99,18 @@ router.put(
 );
 
 router.get("/list", authenticate.verifyUser, (req, res, next) => {
+  var totalAccountsBalance;
   Account.find({ accountOwner: req.user._id })
     .then(
       (accounts) => {
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
+        for (let i = 0; i < accounts.length; i++) {
+          console.log(accounts[i].accountBalance);
+          totalAccountsBalance =
+            totalAccountsBalance + accounts[i].accountBalance;
+        }
+        console.log(totalAccountsBalance);
         res.json(accounts);
       },
       (err) => next(err)

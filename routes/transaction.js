@@ -329,13 +329,31 @@ router.get(
   "/list/:accountNumber",
   authenticate.verifyUser,
   (req, res, next) => {
+    console.log(req.user);
     if (!req.user.bankEmployee) {
+      const query = {
+        $or: [
+          {
+            fromAccountNumber: {
+              $regex: req.params.accountNumber,
+              $options: "i",
+            },
+          },
+          {
+            toAccountNumber: {
+              $regex: req.params.accountNumber,
+              $options: "i",
+            },
+          },
+        ],
+      };
       Account.find({
-        accountNumber: req.body.accountNumber,
+        accountNumber: req.params.accountNumber,
         accountOwner: req.user._id,
       })
         .then(
           (account) => {
+            console.log(account);
             if (account[0] === undefined) {
               var err = new Error(
                 "You cannot view transactions from an account that does not belong to you"
@@ -343,7 +361,7 @@ router.get(
               err.status = 500;
               next(err);
             } else {
-              Transaction.find({ fromAccountNumber: req.params.accountNumber })
+              Transaction.find(query)
                 .then(
                   (transactions) => {
                     res.statusCode = 200;
